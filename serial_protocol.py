@@ -1,4 +1,4 @@
-import serial
+import serial as pyserial
 import socket
 
 def read_sensor_data(serial_port='/dev/serial0', baudrate=115200):
@@ -13,7 +13,7 @@ def read_sensor_data(serial_port='/dev/serial0', baudrate=115200):
     udp_port = 5005
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    ser = serial.Serial(serial_port, baudrate, timeout=1)
+    ser = pyserial.Serial(serial_port, baudrate, timeout=1)
 
     try:
         while True:
