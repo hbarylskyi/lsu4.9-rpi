@@ -19,11 +19,11 @@ def read_sensor_data(serial_port='/dev/serial0', baudrate=115200):
         while True:
             if ser.in_waiting >= 8:
                 data = ser.read(8)
-            afr = data[0] * 0.1
-            temperature = data[1]
-            message = f"AFR: {afr}, Temperature: {temperature}"
-            print(message)
-            sock.sendto(message.encode(), (udp_ip, udp_port))
+                afr = data[0] * 0.1
+                temperature = data[1]
+                message = f"AFR: {afr}, Temperature: {temperature}"
+                print(message)
+                sock.sendto(message.encode(), (udp_ip, udp_port))
     except KeyboardInterrupt:
         print("Stopping data read.")
     finally:
