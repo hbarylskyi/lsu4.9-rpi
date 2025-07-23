@@ -27,14 +27,6 @@ def read_sensor_data(gpio_pin=17):
             message = f"AFR: {afr}, Temperature: {temperature}"
             print(message)
             sock.sendto(message.encode(), (udp_ip, udp_port))
-        while True:
-            if ser.in_waiting >= 8:
-                data = ser.read(8)
-                afr = data[0] * 0.1
-                temperature = data[1]
-                message = f"AFR: {afr}, Temperature: {temperature}"
-                print(message)
-                sock.sendto(message.encode(), (udp_ip, udp_port))
     except KeyboardInterrupt:
         print("Stopping data read.")
     finally:
