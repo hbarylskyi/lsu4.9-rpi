@@ -1,5 +1,6 @@
 import serial as pyserial
 import socket
+from screen_display import display_on_screen
 
 def read_sensor_data(serial_port='/dev/serial0', baudrate=115200):
     """
@@ -24,6 +25,7 @@ def read_sensor_data(serial_port='/dev/serial0', baudrate=115200):
                 message = f"AFR: {afr}, Temperature: {temperature}"
                 print(message)
                 sock.sendto(message.encode(), (udp_ip, udp_port))
+                display_on_screen(afr, temperature)
     except KeyboardInterrupt:
         print("Stopping data read.")
     finally:
