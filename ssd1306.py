@@ -42,7 +42,18 @@ class SSD1306:
         self.initialize()
         self.send_command(SSD1306_DISPLAY_ON)
 
+    def clear_display(self):
+        # Clear the display by filling it with zeros
+        self.ssd1306_fillscreen(0x00)
+
+    def ssd1306_fillscreen(self, fill):
+        self.set_position(0, 0)
+        for i in range(0, 128 * 8):
+            self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, fill)
+
     def display_text(self, text, x=0, y=0):
+        # Clear the display before writing new text
+        self.clear_display()
         # Set position to start displaying text
         self.set_position(x, y)
         for char in text:
