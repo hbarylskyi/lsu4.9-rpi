@@ -6,7 +6,7 @@
 #define SSD1306_I2C_ADDRESS 0x3C
 
 
-const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequence
+const uint8_t PROGMEM ssd1306_init_sequence []  = {	// Initialization Sequence
 	0xAE,			// Set Display ON/OFF - AE=OFF, AF=ON
 	0xD5, 0xF0,		// Set display clock divide ratio/oscillator frequency, set divide ratio
 	0xA8, 0x3F,		// Set multiplex ratio (1 to 64) ... (height - 1)
