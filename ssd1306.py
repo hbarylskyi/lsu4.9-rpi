@@ -1,6 +1,6 @@
 import smbus
 import time
-from font8x16 import ssd1306xled_font8x16
+import font8x16
 
 # Constants for the SSD1306
 SSD1306_I2C_ADDRESS = 0x3C
@@ -66,7 +66,7 @@ class SSD1306:
     def write_char(self, char):
         # Calculate the index in the font array
         index = ord(char) - 32  # Adjust for ASCII offset
-        char_data = ssd1306xled_font8x16[index]
+        char_data = font8x16.ssd1306xled_font8x16[index]
 
         # Write each byte of the character to the display
         for byte in char_data:
