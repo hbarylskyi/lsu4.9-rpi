@@ -145,8 +145,10 @@ void SSD1306::clearDisplay() {
 
 void SSD1306::displayText(const std::string& text) {
     for (char c : text) {
-        // Implement character to byte mapping here
-        sendData(c);
+        // Simple ASCII to byte mapping for demonstration
+        // This should be replaced with actual font data
+        uint8_t byte = static_cast<uint8_t>(c);
+        sendData(byte);
     }
 }
 
