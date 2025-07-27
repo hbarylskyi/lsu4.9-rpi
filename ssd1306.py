@@ -57,27 +57,25 @@ class SSD1306:
         # Set position to start displaying text
         self.set_position(x, y)
         for char in text:
-            self.write_char(char)
+            # self.write_char(char)
+            # self.bus.write_i2c_block_data(SSD1306_I2C_ADDRESS, 0x40, 0x3E)
+            self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, ord(char))
+            self.set_position(x+ 20, y + 5 + 1)  # Move cursor to the right for next character
 
     def write_char(self, char):
-        # Example font data for demonstration purposes
-        font_data = [
-            0x00, 0x3E, 0x51, 0x49, 0x3E,# Example data for character '0'
-            0x3A, 0x5F, 0x4D, 0x31,
-            # Add more font data for other characters
-        ]
+        c = char - 32
         
+        
+ 
     #     for (i= 0; i < 6; i++)
 	# {
 	# 	ssd1306_send_byte(pgm_read_byte(&ssd1306xled_font6x8[c * 6 + i]));
 	# }
         
-        self.bus.write_i2c_block_data(SSD1306_I2C_ADDRESS, 0x40, font_data)
+        # self.bus.write_i2c_block_data(SSD1306_I2C_ADDRESS, 0x40, char)
         # for i in range(5):
-        #     self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, font_data[i])
-        time.sleep(0.3)
-            
-        self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, 0x00)  # Space between characters
+        #     self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, font_data[i])    
+        self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, char)  # Space between characters
 
     def set_position(self, x, y):
         self.send_command(0xB0 + y)
@@ -99,12 +97,12 @@ class SSD1306:
 if __name__ == "__main__":
     display = SSD1306()
     display.initialize()
-    display.display_text("Hello, World!", -50, 50)
+    display.display_text("Hello, World!", 0, 10)
     # Example cat image (replace with actual image data)
     # cat_image = [
     #     0x00, 0x3C, 0x42, 0xA9, 0x85, 0xA9, 0x91, 0x42, 0x3C, 0x00,
     #     # Add more bytes to complete the image
     # ]
     # display.display_image(cat_image)
-    time.sleep(5)
+    time.sleep(10)
     display.turn_off()
