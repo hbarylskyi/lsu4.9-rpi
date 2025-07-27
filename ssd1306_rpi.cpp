@@ -97,6 +97,7 @@ int main() {
     display.ssd1306_fillscreen(0x00);
     display.ssd1306_string_font6x8("Hello, Raspberry Pi!");
     usleep(5000000); // Keep the message on screen for 5 seconds
+    usleep(5000000); // Keep the message on screen for 5 seconds
     display.ssd1306_fillscreen(0x00); // Clear the screen
     return 0;
 }
