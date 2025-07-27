@@ -49,9 +49,13 @@ class SSD1306:
             self.write_char(char)
 
     def write_char(self, char):
-        # Use the complete font array defined in the class
+        # Example font data for demonstration purposes
+        font_data = [
+            0x00, 0x3E, 0x51, 0x49, 0x3E,  # Example data for character '0'
+            # Add more font data for other characters
+        ]
         for i in range(5):
-            self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, 0x)  # Placeholder for character data
+            self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, font_data[i])
         self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, 0x00)  # Space between characters
 
     def set_position(self, x, y):
