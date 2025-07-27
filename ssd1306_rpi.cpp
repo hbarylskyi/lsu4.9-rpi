@@ -44,21 +44,21 @@ void SSD1306Device::send_data(uint8_t data) {
 void SSD1306Device::ssd1306_init() {
     const uint8_t init_sequence[] = {
         0xAE,  // Display off
-            0xD5, 0x80,  // Set display clock divide ratio/oscillator frequency
-            0xA8, 0x3F,  // Set multiplex ratio (1 to 64)
-            0xD3, 0x00,  // Set display offset
-            0x40,  // Set start line address
-            0x8D, 0x14,  // Charge pump setting
-            0x20, 0x00,  // Memory addressing mode
-            0xA0,  // Set segment re-map
-            0xC8,  // Set COM output scan direction
-            0xDA, 0x12,  // Set COM pins hardware configuration
-            0x81, 0x7F,  // Set contrast control
-            0xD9, 0xF1,  // Set pre-charge period
-            0xDB, 0x40,  // Set VCOMH deselect level
-            0xA4,  // Entire display on
-            0xA6,  // Set normal display
-            0xAF,  // D
+        0xD5, 0xF0,  // Set display clock divide ratio/oscillator frequency
+        0xA8, 0x3F,  // Set multiplex ratio (1 to 64)
+        0xD3, 0x00,  // Set display offset
+        0x40,  // Set start line address
+        0x8D, 0x14,  // Charge pump setting
+        0x20, 0x00,  // Memory addressing mode
+        0xA0,  // Set segment re-map
+        0xC8,  // Set COM output scan direction
+        0xDA, 0x12,  // Set COM pins hardware configuration
+        0x81, 0x3F,  // Set contrast control
+        0xD9, 0x22,  // Set pre-charge period
+        0xDB, 0x20,  // Set VCOMH deselect level
+        0xA4,  // Entire display on
+        0xA6,  // Set normal display
+        0xAF,  // Display on
     };
     for (uint8_t cmd : init_sequence) {
         send_command(cmd);
@@ -95,6 +95,7 @@ int main() {
     SSD1306Device display;
     display.begin();
     display.ssd1306_fillscreen(0x00);
+    display.ssd1306_string_font6x8("Hello, Raspberry Pi!");
     display.ssd1306_string_font6x8("Hello, Raspberry Pi!");
     usleep(5000000); // Keep the message on screen for 5 seconds
     usleep(5000000); // Keep the message on screen for 5 seconds
