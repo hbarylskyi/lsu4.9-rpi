@@ -3,6 +3,7 @@
 #include <wiringPiI2C.h>
 #include <iostream>
 #include <string>
+#include "ssd1306_rpi.h"
 
 int main() {
     SSD1306 display;
