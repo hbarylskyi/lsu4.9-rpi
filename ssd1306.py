@@ -1,5 +1,6 @@
 import smbus
 import time
+from font8x16 import ssd1306xled_font8x16
 
 # Constants for the SSD1306
 SSD1306_I2C_ADDRESS = 0x3C
@@ -63,19 +64,13 @@ class SSD1306:
             self.set_position(x+ 20, y + 5 + 1)  # Move cursor to the right for next character
 
     def write_char(self, char):
-        c = char - 32
-        
-        
- 
-    #     for (i= 0; i < 6; i++)
-	# {
-	# 	ssd1306_send_byte(pgm_read_byte(&ssd1306xled_font6x8[c * 6 + i]));
-	# }
-        
-        # self.bus.write_i2c_block_data(SSD1306_I2C_ADDRESS, 0x40, char)
-        # for i in range(5):
-        #     self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, font_data[i])    
-        self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, char)  # Space between characters
+        # Calculate the index in the font array
+        index = ord(char) - 32  # Adjust for ASCII offset
+        char_data = ssd1306xled_font8x16[index]
+
+        # Write each byte of the character to the display
+        for byte in char_data:
+            self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, byte)
 
     def set_position(self, x, y):
         self.send_command(0xB0 + y)
