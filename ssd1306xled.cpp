@@ -25,7 +25,7 @@
 
 // Some code based on "IIC_wtihout_ACK" by http://www.14blog.com/archives/1358
 
-const uint8_t PROGMEM ssd1306_init_sequence [] = {	// Initialization Sequence
+const PROGMEM uint8_t ssd1306_init_sequence [] = {	// Initialization Sequence
 	0xAE,			// Set Display ON/OFF - AE=OFF, AF=ON
 	0xD5, 0xF0,		// Set display clock divide ratio/oscillator frequency, set divide ratio
 	0xA8, 0x3F,		// Set multiplex ratio (1 to 64) ... (height - 1)
