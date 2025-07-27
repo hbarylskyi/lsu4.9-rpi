@@ -47,7 +47,32 @@ const uint8_t PROGMEM ssd1306_init_sequence [] = {	// Initialization Sequence
 
 // Program:    5248 bytes
 
-SSD1306Device::SSD1306Device(void){}
+class SSD1306Device {
+public:
+    SSD1306Device(void);
+    void I2CInit();
+    bool I2CStart(uint8_t address, int readcount);
+    uint8_t I2CTransfer(uint8_t data);
+    void I2CStop(void);
+    void begin();
+    bool I2CWrite(uint8_t data);
+    void ssd1306_init(void);
+    void ssd1306_tiny_init(void);
+    void ssd1306_send_command_start(void);
+    void ssd1306_send_command_stop();
+    void ssd1306_send_command(uint8_t command);
+    void ssd1306_send_byte(uint8_t byte);
+    void ssd1306_send_data_start(void);
+    void ssd1306_send_data_stop();
+    void ssd1306_fillscreen(uint8_t fill);
+    void ssd1306_setpos(uint8_t x, uint8_t y);
+    void ssd1306_char_font6x8(char ch);
+    void ssd1306_string_font6x8(char *s);
+    void ssd1306_draw_bmp(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, const uint8_t bitmap[]);
+    void ssd1306_char_f8x16(uint8_t x, uint8_t y, const char ch[]);
+private:
+    int fd; // File descriptor for I2C communication
+};
 
 void SSD1306Device::I2CInit() {
 	PORT_USI |= 1<<PIN_USI_SDA;                 // Enable pullup on SDA.
