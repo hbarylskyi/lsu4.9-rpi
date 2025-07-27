@@ -124,7 +124,7 @@ int main() {
     usleep(5000000); // Keep the message on screen for 5 seconds
     usleep(5000000); // Keep the message on screen for 5 seconds
     display.ssd1306_fillscreen(0x00); // Clear the screen
-    i2cClose(fd);
+    // i2cClose(fd);
     gpioTerminate();
     return 0;
 }
