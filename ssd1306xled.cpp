@@ -13,8 +13,9 @@
 // ----------------------------------------------------------------------------
 
 
-#include <wiringPi.h>
-#include <wiringPiI2C.h>
+#include <stdlib.h>
+#include <avr/io.h>
+#include <avr/pgmspace.h>
 
 #include "ssd1306xled.h"
 #include "font6x8.h"
@@ -24,7 +25,7 @@
 
 // Some code based on "IIC_wtihout_ACK" by http://www.14blog.com/archives/1358
 
-const uint8_t PROGMEM ssd1306_init_sequence [] = {	// Initialization Sequence
+const PROGMEM uint8_t ssd1306_init_sequence [] = {	// Initialization Sequence
 	0xAE,			// Set Display ON/OFF - AE=OFF, AF=ON
 	0xD5, 0xF0,		// Set display clock divide ratio/oscillator frequency, set divide ratio
 	0xA8, 0x3F,		// Set multiplex ratio (1 to 64) ... (height - 1)
@@ -74,19 +75,75 @@ private:
 };
 
 void SSD1306Device::I2CInit() {
-    fd = wiringPiI2CSetup(SSD1306_SA);
-    if (fd == -1) {
-        std::cerr << "Failed to initialize I2C communication.\n";
-        exit(1);
-    }
+	PORT_USI |= 1<<PIN_USI_SDA;                 // Enable pullup on SDA.
+	PORT_USI_CL |= 1<<PIN_USI_SCL;              // Enable pullup on SCL.
+
+	DDR_USI_CL |= 1<<PIN_USI_SCL;               // Enable SCL as output.
+	DDR_USI |= 1<<PIN_USI_SDA;                  // Enable SDA as output.
+
+	USIDR = 0xFF;                               // Preload data register with "released level" data.
+	USICR = 0<<USISIE | 0<<USIOIE |             // Disable Interrupts.
+			1<<USIWM1 | 0<<USIWM0 |             // Set USI in Two-wire mode.
+			1<<USICS1 | 0<<USICS0 | 1<<USICLK | // Software stobe as counter clock source
+			0<<USITC;
+	USISR = 1<<USISIF | 1<<USIOIF | 1<<USIPF | 1<<USIDC | // Clear flags,
+			0x0<<USICNT0;                       // and reset counter.
 }
 
-bool SSD1306Device::I2CWrite(uint8_t data) {
-    return wiringPiI2CWrite(fd, data) != -1;
+bool SSD1306Device::I2CStart(uint8_t address, int readcount) {
+	if (readcount != 0) { I2Ccount = readcount; readcount = 1; }
+	uint8_t addressRW = address<<1 | readcount;
+
+	/* Release SCL to ensure that (repeated) Start can be performed */
+	PORT_USI_CL |= 1<<PIN_USI_SCL;              // Release SCL.
+	while (!(PIN_USI_CL & 1<<PIN_USI_SCL));     // Verify that SCL becomes high.
+	#ifdef TWI_FAST_MODE
+	DELAY_T4TWI;
+	#else
+	DELAY_T2TWI;
+	#endif
+
+	/* Generate Start Condition */
+	PORT_USI &= ~(1<<PIN_USI_SDA);              // Force SDA LOW.
+	DELAY_T4TWI;
+	PORT_USI_CL &= ~(1<<PIN_USI_SCL);           // Pull SCL LOW.
+	PORT_USI |= 1<<PIN_USI_SDA;                 // Release SDA.
+
+	if (!(USISR & 1<<USISIF)) return false;
+
+	/*Write address */
+	PORT_USI_CL &= ~(1<<PIN_USI_SCL);           // Pull SCL LOW.
+	USIDR = addressRW;                          // Setup data.
+	I2CTransfer(USISR_8bit);                 // Send 8 bits on bus.
+
+	/* Clock and verify (N)ACK from slave */
+	DDR_USI &= ~(1<<PIN_USI_SDA);               // Enable SDA as input.
+	if (I2CTransfer(USISR_1bit) & 1<<TWI_NACK_BIT) return false; // No ACK
+
+	return true;                                // Start successfully completed
 }
 
-void SSD1306Device::I2CStop(void) {
-    // No explicit stop needed with WiringPi
+uint8_t SSD1306Device::I2CTransfer (uint8_t data) {
+  USISR = data;                               // Set USISR according to data.
+                                              // Prepare clocking.
+  data = 0<<USISIE | 0<<USIOIE |              // Interrupts disabled
+         1<<USIWM1 | 0<<USIWM0 |              // Set USI in Two-wire mode.
+         1<<USICS1 | 0<<USICS0 | 1<<USICLK |  // Software clock strobe as source.
+         1<<USITC;                            // Toggle Clock Port.
+  do {
+    DELAY_T2TWI;
+    USICR = data;                             // Generate positive SCL edge.
+    while (!(PIN_USI_CL & 1<<PIN_USI_SCL));   // Wait for SCL to go high.
+    DELAY_T4TWI;
+    USICR = data;                             // Generate negative SCL edge.
+  } while (!(USISR & 1<<USIOIF));             // Check for transfer complete.
+
+  DELAY_T2TWI;
+  data = USIDR;                               // Read out data.
+  USIDR = 0xFF;                               // Release SDA.
+  DDR_USI |= (1<<PIN_USI_SDA);                // Enable SDA as output.
+
+  return data;                                // Return the data from the USIDR
 }
 
 void SSD1306Device::I2CStop (void) {
