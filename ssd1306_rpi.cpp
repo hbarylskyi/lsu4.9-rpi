@@ -58,11 +58,11 @@ void SSD1306Device::begin() {
 }
 
 void SSD1306Device::send_command(uint8_t command) {
-    i2cWriteByteData(fd, 0x00, command);
+    // i2cWriteByteData(fd, 0x00, command);
 }
 
 void SSD1306Device::send_data(uint8_t data) {
-    i2cWriteByteData(fd, 0x40, data);
+    // i2cWriteByteData(fd, 0x40, data);
 }
 
 void SSD1306Device::ssd1306_init() {
