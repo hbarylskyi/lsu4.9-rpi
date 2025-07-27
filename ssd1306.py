@@ -143,12 +143,8 @@ class SSD1306:
             self.write_char(char)
 
     def write_char(self, char):
-        # Basic 5x8 font
-        font = [
-            0x00, 0x00, 0x00, 0x00, 0x00,  # Space
-            0x00, 0x00, 0x5F, 0x00, 0x00,  # !
-            # Add more characters as needed
-        ]
+        # Use the complete font array from the initialization
+        font = self.initialize.__code__.co_consts[1]
         index = ord(char) - 32
         for i in range(5):
             self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, font[index * 5 + i])
