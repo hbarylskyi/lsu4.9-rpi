@@ -15,7 +15,6 @@
 
 #include <stdlib.h>
 #include <avr/io.h>
-
 #include <avr/pgmspace.h>
 
 #include "ssd1306xled.h"
