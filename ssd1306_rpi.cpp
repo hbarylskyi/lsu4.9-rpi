@@ -43,9 +43,22 @@ void SSD1306Device::send_data(uint8_t data) {
 
 void SSD1306Device::ssd1306_init() {
     const uint8_t init_sequence[] = {
-        0xAE, 0xD5, 0x80, 0xA8, 0x3F, 0xD3, 0x00, 0x40, 0x8D, 0x14,
-        0x20, 0x00, 0xA1, 0xC8, 0xDA, 0x12, 0x81, 0x7F, 0xD9, 0xF1,
-        0xDB, 0x40, 0xA4, 0xA6, 0xAF
+        0xAE,  // Display off
+            0xD5, 0x80,  // Set display clock divide ratio/oscillator frequency
+            0xA8, 0x3F,  // Set multiplex ratio (1 to 64)
+            0xD3, 0x00,  // Set display offset
+            0x40,  // Set start line address
+            0x8D, 0x14,  // Charge pump setting
+            0x20, 0x00,  // Memory addressing mode
+            0xA0,  // Set segment re-map
+            0xC8,  // Set COM output scan direction
+            0xDA, 0x12,  // Set COM pins hardware configuration
+            0x81, 0x7F,  // Set contrast control
+            0xD9, 0xF1,  // Set pre-charge period
+            0xDB, 0x40,  // Set VCOMH deselect level
+            0xA4,  // Entire display on
+            0xA6,  // Set normal display
+            0xAF,  // D
     };
     for (uint8_t cmd : init_sequence) {
         send_command(cmd);
