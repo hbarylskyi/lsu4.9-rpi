@@ -24,10 +24,10 @@ class SSD1306:
             0x40,  # Set start line address
             0x8D, 0x14,  # Charge pump setting
             0x20, 0x00,  # Memory addressing mode
-            0xA1,  # Set segment re-map
+            0xA0,  # Set segment re-map
             0xC8,  # Set COM output scan direction
             0xDA, 0x12,  # Set COM pins hardware configuration
-            0x81, 0xCF,  # Set contrast control
+            0x81, 0x7F,  # Set contrast control
             0xD9, 0xF1,  # Set pre-charge period
             0xDB, 0x40,  # Set VCOMH deselect level
             0xA4,  # Entire display on
@@ -265,7 +265,7 @@ class SSD1306:
 
 if __name__ == "__main__":
     display = SSD1306()
-    display.turn_on()
+    display.initialize()
     display.display_text("Hello, World!", 0, 0)
     # Example cat image (replace with actual image data)
     cat_image = [
