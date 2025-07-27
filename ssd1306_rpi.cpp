@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdint>
 #include <unistd.h> // For usleep
-#include <wiringPiI2C.h>
+#include <pigpio.h>
 
 #define SSD1306_I2C_ADDRESS 0x3C
 
@@ -42,7 +42,11 @@ private:
 };
 
 SSD1306Device::SSD1306Device() {
-    fd = wiringPiI2CSetup(SSD1306_I2C_ADDRESS);
+    if (gpioInitialise() < 0) {
+        std::cerr << "Failed to initialize pigpio.\n";
+        exit(1);
+    }
+    fd = i2cOpen(1, SSD1306_I2C_ADDRESS, 0);
     if (fd == -1) {
         std::cerr << "Failed to init I2C communication.\n";
         exit(1);
@@ -54,11 +58,11 @@ void SSD1306Device::begin() {
 }
 
 void SSD1306Device::send_command(uint8_t command) {
-    wiringPiI2CWriteReg8(fd, 0x00, command);
+    i2cWriteByteData(fd, 0x00, command);
 }
 
 void SSD1306Device::send_data(uint8_t data) {
-    wiringPiI2CWriteReg8(fd, 0x40, data);
+    i2cWriteByteData(fd, 0x40, data);
 }
 
 void SSD1306Device::ssd1306_init() {
@@ -120,5 +124,7 @@ int main() {
     usleep(5000000); // Keep the message on screen for 5 seconds
     usleep(5000000); // Keep the message on screen for 5 seconds
     display.ssd1306_fillscreen(0x00); // Clear the screen
+    i2cClose(fd);
+    gpioTerminate();
     return 0;
 }
