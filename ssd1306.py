@@ -41,7 +41,34 @@ class SSD1306:
         self.initialize()
         self.send_command(SSD1306_DISPLAY_ON)
 
-    def test_pattern(self):
+    def display_text(self, text, x=0, y=0):
+        # Set position to start displaying text
+        self.set_position(x, y)
+        for char in text:
+            self.write_char(char)
+
+    def write_char(self, char):
+        # Basic 5x8 font
+        font = [
+            0x00, 0x00, 0x00, 0x00, 0x00,  # Space
+            0x00, 0x00, 0x5F, 0x00, 0x00,  # !
+            # Add more characters as needed
+        ]
+        index = ord(char) - 32
+        for i in range(5):
+            self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, font[index * 5 + i])
+        self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, 0x00)  # Space between characters
+
+    def set_position(self, x, y):
+        self.send_command(0xB0 + y)
+        self.send_command(0x00 + (x & 0x0F))
+        self.send_command(0x10 + ((x >> 4) & 0x0F))
+
+    def display_image(self, image):
+        # Display a bitmap image
+        self.set_position(0, 0)
+        for byte in image:
+            self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, byte)
         # Fill the screen with a test pattern
         for i in range(0, 128 * 8):
             self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, 0xFF)  # 0x40 is the data mode
@@ -52,6 +79,12 @@ class SSD1306:
 if __name__ == "__main__":
     display = SSD1306()
     display.turn_on()
-    display.test_pattern()
+    display.display_text("Hello, World!", 0, 0)
+    # Example cat image (replace with actual image data)
+    cat_image = [
+        0x00, 0x3C, 0x42, 0xA9, 0x85, 0xA9, 0x91, 0x42, 0x3C, 0x00,
+        # Add more bytes to complete the image
+    ]
+    display.display_image(cat_image)
     time.sleep(5)
     display.turn_off()
