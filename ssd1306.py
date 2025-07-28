@@ -62,16 +62,18 @@ class SSD1306:
             # self.bus.write_i2c_block_data(SSD1306_I2C_ADDRESS, 0x40, 0x3E)
             # self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, ord(char))
             self.write_char(char)
-            self.set_position(x+ 20, y + 5 + 1)  # Move cursor to the right for next character
+            self.set_position(x, y + 5 + 1)  # Move cursor to the right for next character
 
     def write_char(self, char):
         # Calculate the index in the font array
         index = ord(char) - 32  # Adjust for ASCII offset
+        print(f"Writing character: {char} (index: {index})")
         char_data = font8x16.ssd1306xled_font8x16[index]
 
         # Write each byte of the character to the display
-        for byte in char_data:
-            self.bus.write_i2c_block_data(SSD1306_I2C_ADDRESS, 0x40, byte)
+        # for byte in char_data:
+        #     self.bus.write_i2c_block_data(SSD1306_I2C_ADDRESS, 0x40, byte)
+        self.bus.write_i2c_block_data(SSD1306_I2C_ADDRESS, 0x40, char_data)
 
     def set_position(self, x, y):
         self.send_command(0xB0 + y)
@@ -93,12 +95,12 @@ class SSD1306:
 if __name__ == "__main__":
     display = SSD1306()
     display.initialize()
-    display.display_text("Hello, World!", 0, 10)
+    display.display_text("Hello", -50, 50)
     # Example cat image (replace with actual image data)
     # cat_image = [
     #     0x00, 0x3C, 0x42, 0xA9, 0x85, 0xA9, 0x91, 0x42, 0x3C, 0x00,
     #     # Add more bytes to complete the image
     # ]
     # display.display_image(cat_image)
-    time.sleep(10)
+    time.sleep(20)
     display.turn_off()
