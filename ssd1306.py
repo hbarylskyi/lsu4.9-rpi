@@ -60,7 +60,8 @@ class SSD1306:
         for char in text:
             # self.write_char(char)
             # self.bus.write_i2c_block_data(SSD1306_I2C_ADDRESS, 0x40, 0x3E)
-            self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, ord(char))
+            # self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, ord(char))
+            self.write_char(char)
             self.set_position(x+ 20, y + 5 + 1)  # Move cursor to the right for next character
 
     def write_char(self, char):
@@ -70,7 +71,7 @@ class SSD1306:
 
         # Write each byte of the character to the display
         for byte in char_data:
-            self.bus.write_byte_data(SSD1306_I2C_ADDRESS, 0x40, byte)
+            self.bus.write_i2c_block_data(SSD1306_I2C_ADDRESS, 0x40, byte)
 
     def set_position(self, x, y):
         self.send_command(0xB0 + y)
