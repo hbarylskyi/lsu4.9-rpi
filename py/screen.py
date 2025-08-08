@@ -30,7 +30,8 @@ def display_on_screen(afr, temperature):
     
     # Draw a cat
     cat = Image.open("cats/nyan-sit.png").convert("1")
-    new_size = (40, 40)
+    original_size = cat.size
+    new_size = (original_size[0] // 2, original_size[1] // 2)
     
     resized_cat = cat.resize(new_size, Image.LANCZOS)
     
