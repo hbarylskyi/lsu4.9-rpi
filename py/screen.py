@@ -24,7 +24,9 @@ def display_on_screen(afr, temperature):
     # Clear display
     draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
-    # Display text
+    # Load and draw cat image
+    cat_image = Image.open("cats/nyan.png").convert("1")
+    image.paste(cat_image, (0, 16))
     message = f"AFR: {afr} Temp: {temperature}"
     draw.text((0, 0), message, font=font, fill=255)
     
