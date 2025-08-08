@@ -34,7 +34,7 @@ def display_on_screen(afr, temperature):
     print(f"Original cat size: {original_size}")
     new_size = (50 , 36)
     
-    resized_cat = cat.resize(new_size, Image.LANCZOS)
+    resized_cat = cat.resize(new_size, Image.BICUBIC)
     
     image.paste(resized_cat, (0, 16))    
     
