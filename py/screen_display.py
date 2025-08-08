@@ -1,4 +1,6 @@
-import smbus2
+from luma.core.interface.serial import i2c
+from luma.oled.device import ssd1306
+from PIL import Image, ImageDraw, ImageFont
 import time
 
 def display_on_screen(afr, temperature):
@@ -8,16 +10,22 @@ def display_on_screen(afr, temperature):
     :param afr: Air-Fuel Ratio to display.
     :param temperature: Temperature to display.
     """
-    bus = smbus2.SMBus(0)  # Use I2C bus 1
-    address = 0x78  # I2C address of the screen
+    # Initialize I2C and display
+    serial = i2c(port=1, address=0x3C)
+    device = ssd1306(serial, width=128, height=64)
 
-    # Example of sending data to the screen
-    try:
-        bus.write_byte_data(address, 0x00, 0x01)  # Clear display command
-        time.sleep(0.5)
-        message = f"AFR: {afr} Temp: {temperature}"
-        for char in message:
-            bus.write_byte_data(address, 0x40, ord(char))
-            time.sleep(0.5)
-    finally:
-        bus.close()
+    # Create drawing canvas
+    width = device.width
+    height = device.height
+    image = Image.new("1", (width, height))
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.load_default()
+
+    # Clear display
+    draw.rectangle((0, 0, width, height), outline=0, fill=0)
+
+    # Display text
+    message = f"AFR: {afr} Temp: {temperature}"
+    draw.text((0, 0), message, font=font, fill=255)
+    device.display(image)
+    time.sleep(2)
