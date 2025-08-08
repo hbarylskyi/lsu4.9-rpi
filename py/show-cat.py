@@ -22,10 +22,12 @@ frames = load_frames("cats")
 
 if not frames:
     raise RuntimeError("No frames found in ./cats/")
-
+device.display(frames[0])  # Display the first frame
+time.sleep(10.05)  # adjust speed
 # Loop animation
-while True:
-    for frame in frames:
-        device.display(frame)
-        time.sleep(0.1)  # adjust speed
+# while True:
+#     device.display(frames[0])  # Display the first frame
+#     time.sleep(0.05)  # adjust speed
+    # for frame in frames:
+        
 

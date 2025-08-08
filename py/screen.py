@@ -32,9 +32,10 @@ def display_on_screen(afr, temperature):
     cat = Image.open("cats/nyan-sit.png").convert("1")
     original_size = cat.size
     print(f"Original cat size: {original_size}")
-    new_size = (50 , 36)
+    new_size = (75 , 54)
     
-    resized_cat = cat.resize(new_size, Image.BICUBIC)
+    resizetype=Image.BICUBIC
+    resized_cat = cat.resize(new_size, resizetype)
     
     image.paste(resized_cat, (0, 16))    
     
