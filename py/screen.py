@@ -25,12 +25,16 @@ def display_on_screen(afr, temperature):
     draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
     # Load and draw cat image
-    cat_image = Image.open("cats/nyan.png").convert("1")
-    image.paste(cat_image, (0, 16))
     message = f"AFR: {afr} Temp: {temperature}"
     draw.text((0, 0), message, font=font, fill=255)
     
-    # draw.image 
+    # Draw a cat
+    cat = Image.open("cats/nyan-sit.png").convert("1")
+    new_size = (40, 40)
+    
+    resized_cat = cat.resize(new_size, Image.LANCZOS)
+    
+    image.paste(resized_cat, (0, 16))    
     
     device.display(image)
     time.sleep(2)
