@@ -29,7 +29,7 @@ def display_on_screen(afr, temperature):
     draw.text((0, 0), message, font=font, fill=255)
     
     # Draw a cat
-    cat = Image.open("cats/nyan-sit.png").convert("1")
+    cat = Image.open("cats/0cat-white.png").convert("1")
     original_size = cat.size
     print(f"Original cat size: {original_size}")
     new_size = (75 , 54)
@@ -37,7 +37,7 @@ def display_on_screen(afr, temperature):
     resizetype=Image.BICUBIC
     resized_cat = cat.resize(new_size, resizetype)
     
-    image.paste(resized_cat, (0, 16))    
+    image.paste(resized_cat, (128-75, 16))    
     
     device.display(image)
     time.sleep(2)
