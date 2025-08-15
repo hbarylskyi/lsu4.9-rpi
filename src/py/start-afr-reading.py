@@ -65,7 +65,7 @@ def read_sensor_data():
             if waiting == 0:
                 time.sleep(0.001)
                 continue
-            print(f"[DEBUG] Bytes waiting in serial: {waiting}")
+            # print(f"[DEBUG] Bytes waiting in serial: {waiting}")
             # Read whatever is in the serial buffer
             data = ser.read(waiting)
             buffer.extend(data)
@@ -74,7 +74,7 @@ def read_sensor_data():
             while len(buffer) >= 8:
                 packet = buffer[:8]
                 buffer = buffer[8:]
-                print(f"[DEBUG] Processing packet, buffer length now: {len(buffer)}")
+                # print(f"[DEBUG] Processing packet, buffer length now: {len(buffer)}")
                 process_packet(packet)
 
         except serial.SerialException as e:
