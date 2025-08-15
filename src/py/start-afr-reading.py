@@ -1,4 +1,4 @@
-import serial as pyserial
+import serial
 from screen import display_on_screen
 import time
 import threading
@@ -60,7 +60,7 @@ def read_sensor_data(serial_port='/dev/ttyAMA0', baudrate=115200):
     # udp_port = 5005
     # sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    ser = pyserial.Serial(serial_port, baudrate, 
+    ser = serial.Serial(serial_port, baudrate, 
                           #bytesize=pyserial.EIGHTBITS,
                           #parity=pyserial.PARITY_NONE,
                           #stopbits=pyserial.STOPBITS_ONE,
