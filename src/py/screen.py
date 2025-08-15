@@ -23,24 +23,23 @@ def display_on_screen(afr, temperature):
     font = ImageFont.load_default()
 
     # Clear display
-    draw.rectangle((0, 0, width, height), outline=0, fill=0)
+    # draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
-    # Load and draw cat image
     message = f"AFR: {afr} Temp: {temperature}"
     draw.text((0, 0), message, font=font, fill=255)
     
     # Draw a cat
-    script_dir = os.path.dirname(__file__)
-    cat_path = os.path.join(script_dir, "cats", "0cat-white.png")
-    cat = Image.open(cat_path).convert("1")
-    original_size = cat.size
-    print(f"Original cat size: {original_size}")
-    new_size = (75 , 54)
+    # script_dir = os.path.dirname(__file__)
+    # cat_path = os.path.join(script_dir, "cats", "0cat-white.png")
+    # cat = Image.open(cat_path).convert("1")
+    # original_size = cat.size
+    # print(f"Original cat size: {original_size}")
+    # new_size = (75 , 54)
     
-    resizetype=Image.BICUBIC
-    resized_cat = cat.resize(new_size, resizetype)
+    # resizetype=Image.BICUBIC
+    # resized_cat = cat.resize(new_size, resizetype)
     
-    image.paste(resized_cat, (128-75, 16))    
+    # image.paste(resized_cat, (128-75, 16))
     
     device.display(image)
     time.sleep(2)

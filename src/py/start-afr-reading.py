@@ -30,6 +30,24 @@ def process_packet(packet):
     # Update display
     threading.Thread(target=display_on_screen, args=(afr_str, temp_str)).start()
 
+serial_port = "/dev/ttyUSB0"  # change to your port
+baudrate = 9600
+buffer = bytearray()
+
+def open_serial():
+    while True:
+        try:
+            ser = serial.Serial(serial_port, baudrate, timeout=0)
+            ser.flushInput()  # clear any old bytes
+            print(f"[INFO] Serial port {serial_port} opened.")
+            return ser
+        except serial.SerialException as e:
+            print(f"[ERROR] Could not open serial port: {e}")
+            time.sleep(2)  # retry every 2 seconds
+
+ser = open_serial()
+
+
 def read_sensor_data(serial_port='/dev/ttyAMA0', baudrate=115200):
     """
     Reads sensor data from a serial port.
@@ -48,39 +66,78 @@ def read_sensor_data(serial_port='/dev/ttyAMA0', baudrate=115200):
                           #stopbits=pyserial.STOPBITS_ONE,
                           timeout=0)
 
-    try:
-        message = f"hi. will read data from {serial_port} at {baudrate} baud."
-        print(message)
-        
-        display_on_screen(999, 999)
+    # try:
+    message = f"hi. will read data from {serial_port} at {baudrate} baud."
+    print(message)
+    
+    display_on_screen(999, 999)
 
-        buffer = bytearray()
+    buffer = bytearray()
 
-        while True:
+
+    while True:
+        try:
             waiting = ser.in_waiting
-            
+
             if waiting == 0:
                 time.sleep(0.001)
                 continue
 
-            print(f"[DEBUG] Bytes waiting in serial: {waiting}")
-            print(f"[DEBUG] Buffer length before read: {len(buffer)}")
-
+            # Read whatever is in the serial buffer
             data = ser.read(waiting)
-            print(f"[DEBUG] Bytes read now: {len(data)}")
-
             buffer.extend(data)
-            print(f"[DEBUG] Buffer length after read: {len(buffer)}")
 
+            # Process complete packets
             while len(buffer) >= 8:
                 packet = buffer[:8]
                 buffer = buffer[8:]
                 print(f"[DEBUG] Processing packet, buffer length now: {len(buffer)}")
                 process_packet(packet)
-    except KeyboardInterrupt:
-        print("Stopping data read.")
-    finally:
-        ser.close()
+
+        except serial.SerialException as e:
+            print(f"[ERROR] Serial exception: {e}")
+            try:
+                ser.close()
+            except:
+                pass
+            time.sleep(2)
+            ser = open_serial()  # try to reopen automatically
+
+        except KeyboardInterrupt:
+            print("Stopping serial read.")
+            try:
+                ser.close()
+            except:
+                pass
+            break
+
+        # while True:
+        #     waiting = ser.in_waiting
+            
+        #     if waiting == 0:
+        #         time.sleep(0.001)
+        #         continue
+
+        #     # print(f"[DEBUG] Bytes waiting in serial: {waiting}")
+        #     # print(f"[DEBUG] Buffer length before read: {len(buffer)}")
+
+            
+        #         # ser.flushInput()  # Clear input buffer before reading
+        #     data = ser.read(waiting)
+        #     # print(f"[DEBUG] Bytes read now: {len(data)}")
+
+        #     buffer.extend(data)
+        #     # print(f"[DEBUG] Buffer length after read: {len(buffer)}")
+
+        #     while len(buffer) >= 8:
+        #         packet = buffer[:8]
+        #         buffer = buffer[8:]
+        #         print(f"[DEBUG] Processing packet, buffer length now: {len(buffer)}")
+        #         process_packet(packet)
+    # except KeyboardInterrupt:
+    #     print("Stopping data read.")
+    # finally:
+    #     ser.close()
 
 if __name__ == "__main__":
     read_sensor_data()
