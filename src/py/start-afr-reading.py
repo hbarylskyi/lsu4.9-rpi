@@ -30,10 +30,6 @@ def process_packet(packet):
     # Update display
     threading.Thread(target=display_on_screen, args=(afr_str, temp_str)).start()
 
-serial_port = "/dev/ttyUSB0"  # change to your port
-baudrate = 9600
-buffer = bytearray()
-
 def open_serial():
     while True:
         try:
@@ -56,10 +52,7 @@ def read_sensor_data(serial_port='/dev/ttyAMA0', baudrate=115200):
     :param baudrate: The baud rate for the serial communication.
     :return: A tuple containing AFR and temperature.
     """
-    # udp_ip = "192.168.1.5"
-    # udp_port = 5005
-    # sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+    buffer = bytearray()
     ser = serial.Serial(serial_port, baudrate, 
                           #bytesize=pyserial.EIGHTBITS,
                           #parity=pyserial.PARITY_NONE,
