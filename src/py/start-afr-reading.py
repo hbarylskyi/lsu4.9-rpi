@@ -1,6 +1,7 @@
 import serial as pyserial
 from screen import display_on_screen
 import time
+import threading
 
 def process_packet(packet):
     """
@@ -27,7 +28,7 @@ def process_packet(packet):
     print(f"AFR: {afr_str}, Temp: {temp_str}°C")
 
     # Update display
-    # display_on_screen(afr_str, temp_str)
+    threading.Thread(target=display_on_screen, args=(afr_str, temp_str)).start()
 
 def read_sensor_data(serial_port='/dev/ttyAMA0', baudrate=115200):
     """
