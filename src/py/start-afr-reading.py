@@ -30,9 +30,12 @@ def process_packet(packet):
     # Update display
     threading.Thread(target=display_on_screen, args=(afr_str, temp_str)).start()
 
-def open_serial():
+def open_serial(serial_port='/dev/ttyAMA0', baudrate=115200):
     while True:
         try:
+            message = f"hi. will read data from {serial_port} at {baudrate} baud."
+            print(message)
+    
             ser = serial.Serial(serial_port, baudrate, timeout=0)
             ser.flushInput()  # clear any old bytes
             print(f"[INFO] Serial port {serial_port} opened.")
@@ -41,10 +44,8 @@ def open_serial():
             print(f"[ERROR] Could not open serial port: {e}")
             time.sleep(2)  # retry every 2 seconds
 
-ser = open_serial()
 
-
-def read_sensor_data(serial_port='/dev/ttyAMA0', baudrate=115200):
+def read_sensor_data():
     """
     Reads sensor data from a serial port.
 
@@ -52,21 +53,10 @@ def read_sensor_data(serial_port='/dev/ttyAMA0', baudrate=115200):
     :param baudrate: The baud rate for the serial communication.
     :return: A tuple containing AFR and temperature.
     """
-    buffer = bytearray()
-    ser = serial.Serial(serial_port, baudrate, 
-                          #bytesize=pyserial.EIGHTBITS,
-                          #parity=pyserial.PARITY_NONE,
-                          #stopbits=pyserial.STOPBITS_ONE,
-                          timeout=0)
-
-    # try:
-    message = f"hi. will read data from {serial_port} at {baudrate} baud."
-    print(message)
-    
     display_on_screen(999, 999)
-
+    
     buffer = bytearray()
-
+    ser = open_serial()
 
     while True:
         try:
@@ -75,7 +65,7 @@ def read_sensor_data(serial_port='/dev/ttyAMA0', baudrate=115200):
             if waiting == 0:
                 time.sleep(0.001)
                 continue
-
+            print(f"[DEBUG] Bytes waiting in serial: {waiting}")
             # Read whatever is in the serial buffer
             data = ser.read(waiting)
             buffer.extend(data)
